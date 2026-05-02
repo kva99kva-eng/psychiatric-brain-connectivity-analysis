@@ -164,3 +164,64 @@ Train baseline machine learning models on connectivity features.
 
 Add interpretation of the most informative brain connections.
 
+## Current progress
+
+The project currently includes three completed analysis stages:
+
+1. Dataset overview and participant-level metadata exploration.
+2. Single-subject resting-state fMRI connectivity matrix construction.
+3. Small group-level functional connectivity comparison across diagnostic groups.
+
+Implemented pipeline:
+
+```text
+participant metadata
+→ resting-state fMRI data
+→ brain atlas parcellation
+→ regional BOLD time series
+→ ROI-to-ROI functional connectivity matrix
+→ group-average connectivity comparison
+
+Current results
+Loaded participant-level metadata from the UCLA CNP dataset.
+Selected participants with available resting-state fMRI data.
+Extracted regional BOLD time series using the Harvard-Oxford cortical atlas.
+Built 48 × 48 ROI-to-ROI functional connectivity matrices.
+Extended the pipeline from one subject to a small multi-group diagnostic sample.
+Computed average connectivity matrices for diagnostic groups.
+Visualized preliminary group-level connectivity differences.
+
+psychiatric-brain-connectivity-analysis/
+│
+├── notebooks/
+│   ├── 01_dataset_overview.ipynb
+│   ├── 02_connectivity_matrices.ipynb
+│   └── 03_group_connectivity_comparison.ipynb
+│
+├── src/
+│   ├── __init__.py
+│   ├── connectivity.py
+│   ├── data_loading.py
+│   ├── modeling.py
+│   └── visualization.py
+│
+├── data/
+│   ├── raw/
+│   └── processed/
+│
+├── reports/
+│   └── figures/
+│
+├── README.md
+├── requirements.txt
+└── .gitignore
+Next steps
+
+Planned improvements:
+
+Increase the number of subjects per diagnostic group.
+Add confound regression using fMRIPrep confounds.
+Add statistical testing of group-level connectivity differences.
+Apply multiple-comparison correction.
+Train baseline machine learning models on connectivity features.
+Add interpretation of the most informative brain connections.

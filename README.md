@@ -46,53 +46,62 @@ This project does not make clinical diagnostic claims. Potential limitations inc
 
 
 
-The project currently includes three completed analysis stages:
+## Current progress
 
+The project currently includes five completed analysis stages:
 
-
-1\. Dataset overview and participant-level metadata exploration.
-
-2\. Single-subject resting-state fMRI connectivity matrix construction.
-
-3\. Small group-level functional connectivity comparison across diagnostic groups.
-
-
+1. Dataset overview and participant-level metadata exploration.
+2. Single-subject resting-state fMRI connectivity matrix construction.
+3. Small group-level functional connectivity comparison across diagnostic groups.
+4. Exploratory statistical testing of connectivity differences.
+5. Baseline machine learning classification using functional connectivity features.
 
 Implemented pipeline:
 
-
-
 ```text
-
 participant metadata
-
 → resting-state fMRI data
-
 → brain atlas parcellation
-
 → regional BOLD time series
-
 → ROI-to-ROI functional connectivity matrix
-
 → group-average connectivity comparison
-
-
+→ permutation-based statistical testing
+→ baseline ML classification
 
 Current results
-
 Loaded participant-level metadata from the UCLA CNP dataset.
-
 Selected participants with available resting-state fMRI data.
-
 Extracted regional BOLD time series using the Harvard-Oxford cortical atlas.
-
 Built 48 × 48 ROI-to-ROI functional connectivity matrices.
-
 Extended the pipeline from one subject to a small multi-group diagnostic sample.
-
 Computed average connectivity matrices for diagnostic groups.
+Performed exploratory permutation-based edge-wise statistical testing.
+Applied Benjamini-Hochberg FDR correction.
+Built baseline leakage-safe ML classification workflows using functional connectivity features.
+Evaluated both multiclass diagnostic classification and binary psychiatric-vs-control classification.
+Important limitations
 
-Visualized preliminary group-level connectivity differences.
+This project does not make clinical diagnostic claims. The current sample size is intentionally small and used for pipeline validation. Statistical and ML results should be interpreted as exploratory technical demonstrations, not as scientific or clinical conclusions.
+
+Potential limitations include:
+
+small sample size;
+head motion artifacts;
+medication effects;
+demographic confounds;
+preprocessing and denoising choices;
+limited generalizability.
+Next steps
+
+Planned improvements:
+
+Increase the number of subjects per diagnostic group.
+Add fMRIPrep confound regression.
+Compare multiple brain atlases.
+Add graph-theoretical network metrics.
+Add feature importance analysis for ML models.
+Improve visual reporting of group-level connectivity differences.
+
 
 Repository structure
 

@@ -100,6 +100,21 @@ Current outputs include:
 - baseline multiclass diagnostic classification;
 - baseline binary psychiatric-vs-control classification.
 
+## Key Visual Results
+
+### Group-level connectivity differences
+
+Mean functional connectivity difference matrix for the SCHZ vs CONTROL comparison.
+
+![Group connectivity differences](assets/group_connectivity_difference.png)
+
+### Machine learning classification results
+
+Baseline classification result based on functional connectivity features.
+
+![ML classification results](assets/ml_classification_results.png)
+
+
 ## Tech Stack
 
 - Python

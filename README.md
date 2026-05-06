@@ -1,182 +1,154 @@
-# Transdiagnostic Functional Connectivity Analysis in Psychiatric Disorders
+# Psychiatric Brain Connectivity Analysis
 
-This project analyzes resting-state fMRI functional connectivity patterns across psychiatric diagnostic groups using the UCLA Consortium for Neuropsychiatric Phenomics dataset.
-
-The goal is to explore whether schizophrenia, bipolar disorder, ADHD, and healthy controls show different brain connectivity patterns in resting-state fMRI data.
-
-This project is not intended as a clinical diagnostic tool. It focuses on interpretable neuroimaging analysis, connectome construction, group comparison, exploratory statistical testing, and baseline machine learning workflows.
+Author: Victoria Kupina
+Role: Data Analyst / Junior Data Scientist
 
 ## Problem Statement
 
-Psychiatric disorders may be associated with altered patterns of functional connectivity between brain regions.
+Psychiatric disorders may be associated with differences in functional brain connectivity.
 
-This project demonstrates how resting-state fMRI data can be transformed into ROI-to-ROI connectivity matrices and used for exploratory group comparison and machine learning classification.
+This project explores resting-state fMRI functional connectivity patterns across psychiatric and control groups using the UCLA Consortium for Neuropsychiatric Phenomics dataset.
 
-## Dataset
-
-Dataset: UCLA Consortium for Neuropsychiatric Phenomics / OpenNeuro ds000030.
-
-The dataset includes neuroimaging and behavioral data from healthy controls and participants diagnosed with schizophrenia, bipolar disorder, and ADHD.
-
-Large raw neuroimaging files are not included in this repository. They should be stored locally in:
-
-`data/raw/`
-
-Processed intermediate files should be stored locally in:
-
-`data/processed/`
+The goal is to build an educational neuroscience data analysis pipeline, not a clinical diagnostic tool.
 
 ## Objectives
 
-- Load and inspect participant-level metadata.
-- Select subjects with available resting-state fMRI data.
-- Extract regional BOLD time series using a brain atlas.
-- Build ROI-to-ROI functional connectivity matrices.
-- Compare connectivity patterns across diagnostic groups.
-- Run exploratory edge-wise statistical testing.
-- Apply multiple-comparison correction.
-- Train baseline machine learning classifiers on connectivity features.
-- Interpret limitations and avoid clinical overclaiming.
+- Load and inspect neuroimaging metadata.
+- Extract or load functional connectivity matrices.
+- Compare brain connectivity patterns across diagnostic groups.
+- Perform exploratory statistical testing.
+- Apply FDR correction for multiple comparisons.
+- Build a simple baseline machine learning classifier.
+- Clearly document limitations caused by very small sample size.
+
+## Dataset
+
+This project is based on the UCLA Consortium for Neuropsychiatric Phenomics dataset, available through OpenNeuro as `ds000030`.
+
+The dataset includes participants from several groups, including:
+
+- healthy controls;
+- schizophrenia;
+- bipolar disorder;
+- ADHD.
+
+Large neuroimaging files are not stored in this repository. Local data should be placed in the `data/` directory according to the project instructions.
 
 ## Project Structure
 
-- `notebooks/01_dataset_overview.ipynb` - dataset overview and participant metadata exploration.
-- `notebooks/02_connectivity_matrices.ipynb` - single-subject connectivity matrix construction.
-- `notebooks/03_group_connectivity_comparison.ipynb` - group-level connectivity comparison.
-- `notebooks/04_statistical_testing.ipynb` - exploratory statistical testing of connectivity differences.
-- `notebooks/05_ml_classification.ipynb` - baseline ML classification using connectivity features.
-- `src/connectivity.py` - connectivity matrix utilities.
-- `src/statistics.py` - statistical testing utilities.
-- `src/modeling.py` - machine learning helper functions.
-- `data/raw/` - local raw neuroimaging data.
-- `data/processed/` - local processed data.
-- `reports/` - local analysis outputs and figures.
-- `requirements.txt` - Python dependencies.
-- `LICENSE` - MIT license.
+- `assets/` — visual assets used in the README.
+- `data/` — local raw and processed data directories.
+- `notebooks/` — step-by-step analysis notebooks.
+- `src/` — reusable Python functions.
+- `requirements.txt` — Python dependencies.
+- `README.md` — project documentation.
+- `LICENSE` — MIT license.
 
 ## Methods
 
 - Resting-state fMRI analysis
-- Brain atlas parcellation
-- Regional BOLD time series extraction
-- Functional connectivity matrix construction
-- Group-average connectivity comparison
-- Permutation-based statistical testing
+- ROI-based functional connectivity
+- Pearson correlation connectivity matrices
+- Group-level connectivity comparison
+- Permutation testing
 - Benjamini-Hochberg FDR correction
 - Baseline machine learning classification
-- Leakage-safe train/test workflows
+- Leave-One-Out cross-validation for tiny sample demonstration
 
 ## Notebooks
 
-- `01_dataset_overview.ipynb` - explores participant metadata and diagnostic group structure.
-- `02_connectivity_matrices.ipynb` - builds a functional connectivity matrix for resting-state fMRI data.
-- `03_group_connectivity_comparison.ipynb` - compares average connectivity patterns across diagnostic groups.
-- `04_statistical_testing.ipynb` - performs exploratory statistical testing of group-level connectivity differences.
-- `05_ml_classification.ipynb` - trains baseline classifiers on functional connectivity features.
+| Notebook | Description |
+|---|---|
+| `01_dataset_overview.ipynb` | Inspect dataset metadata and diagnostic groups |
+| `02_connectivity_matrices.ipynb` | Build or load functional connectivity matrices |
+| `03_group_connectivity_comparison.ipynb` | Compare connectivity matrices across groups |
+| `04_statistical_testing.ipynb` | Run exploratory permutation testing and FDR correction |
+| `05_ml_classification.ipynb` | Train a simple baseline classifier on connectivity features |
 
-## Current Results
+## Source Code
 
-The project currently includes five completed analysis stages:
+| File | Description |
+|---|---|
+| `src/connectivity.py` | Functions for downloading data, extracting ROI time series and computing connectivity matrices |
+| `src/statistics.py` | Functions for vectorizing matrices, permutation testing and FDR correction |
+| `src/modeling.py` | Functions for baseline machine learning classification |
 
-1. Dataset overview and participant-level metadata exploration.
-2. Single-subject resting-state fMRI connectivity matrix construction.
-3. Small group-level functional connectivity comparison across diagnostic groups.
-4. Exploratory statistical testing of connectivity differences.
-5. Baseline machine learning classification using functional connectivity features.
+## Results
 
-Implemented pipeline:
+The project demonstrates a full exploratory workflow for psychiatric brain connectivity analysis.
 
-`participant metadata -> resting-state fMRI data -> brain atlas parcellation -> regional BOLD time series -> ROI-to-ROI functional connectivity matrix -> group-average connectivity comparison -> permutation-based statistical testing -> baseline ML classification`
+Current results should be interpreted cautiously because the repository uses a very small validation subset. The statistical testing and machine learning sections are included to demonstrate methodology, not to make clinical or scientific claims.
 
-Current outputs include:
+## Visual Results
 
-- participant-level metadata inspection;
-- selection of participants with available resting-state fMRI data;
-- extraction of regional BOLD time series using the Harvard-Oxford cortical atlas;
-- construction of 48 x 48 ROI-to-ROI functional connectivity matrices;
-- exploratory group-average connectivity comparison;
-- permutation-based edge-wise statistical testing;
-- Benjamini-Hochberg FDR correction;
-- baseline multiclass diagnostic classification;
-- baseline binary psychiatric-vs-control classification.
+Add generated figures here after running the notebooks, for example:
 
-## Key Visual Results
-
-### Group-level connectivity differences
-
-Mean functional connectivity difference matrix for the SCHZ vs CONTROL comparison.
-
-![Group connectivity differences](assets/group_connectivity_difference.png)
-
-### Machine learning classification results
-
-Baseline classification result based on functional connectivity features.
-
-![ML classification results](assets/ml_classification_results.png)
-
+- group mean connectivity heatmaps;
+- connectivity difference heatmaps;
+- top altered connections;
+- classifier confusion matrix.
 
 ## Tech Stack
 
 - Python
 - NumPy
 - Pandas
-- Nilearn
-- Nibabel
-- SciPy
-- scikit-learn
 - Matplotlib
-- NetworkX
-- Jupyter Notebook
+- SciPy
+- Scikit-learn
+- Nilearn
+- NiBabel
+- Jupyter Lab
 
 ## How to Run
 
 Clone the repository:
 
-`git clone https://github.com/kva99kva-eng/psychiatric-brain-connectivity-analysis.git`
+```bash
+git clone https://github.com/kva99kva-eng/psychiatric-brain-connectivity-analysis.git
+```
 
 Go to the project folder:
 
-`cd psychiatric-brain-connectivity-analysis`
+```bash
+cd psychiatric-brain-connectivity-analysis
+```
 
 Create and activate a virtual environment:
 
-`python -m venv .venv`
-
-`.venv\Scripts\activate`
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
 
 Install dependencies:
 
-`pip install -r requirements.txt`
+```bash
+pip install -r requirements.txt
+```
 
 Run Jupyter Lab:
 
-`jupyter lab`
+```bash
+jupyter lab
+```
 
 Then run the notebooks in order from `01` to `05`.
 
 ## Limitations
 
-This project does not make clinical diagnostic claims.
+This project uses a simplified educational workflow and a very small local validation subset.
 
-The current analysis should be interpreted as an exploratory technical demonstration. Important limitations include:
+It does not provide:
 
-- small sample size;
-- head motion artifacts;
-- medication effects;
-- demographic confounds;
-- preprocessing and denoising choices;
-- limited generalizability;
-- potential instability of statistical and ML results on small samples.
+- clinical diagnosis;
+- validated biomarkers;
+- population-level statistical conclusions;
+- production-grade neuroimaging preprocessing;
+- large-sample model validation;
+- medical recommendations.
 
-## Future Work
-
-- Increase the number of subjects per diagnostic group.
-- Add confound regression using fMRIPrep confounds.
-- Compare multiple brain atlases.
-- Add graph-theoretical network metrics.
-- Add feature importance analysis for machine learning models.
-- Improve visual reporting of group-level connectivity differences.
-- Add more robust validation for classification workflows.
+The statistical and machine learning results should be interpreted as pipeline demonstrations only.
 
 ## License
 

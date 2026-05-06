@@ -1,32 +1,25 @@
-from pathlib import Path
+﻿from pathlib import Path
 from urllib.request import urlretrieve
 
 import numpy as np
 import pandas as pd
-
 from nilearn import datasets
-from nilearn.maskers import NiftiLabelsMasker
 from nilearn.connectome import ConnectivityMeasure
+from nilearn.maskers import NiftiLabelsMasker
 
 
 def get_project_root() -> Path:
-    """
-    Return project root assuming this file is located in src/.
-    """
+    """Return project root assuming this file is located in src/."""
     return Path(__file__).resolve().parents[1]
 
 
 def get_subject_func_filename(subject_id: str) -> str:
-    """
-    Return expected fMRIPrep resting-state fMRI filename for ds000030.
-    """
+    """Return expected fMRIPrep resting-state fMRI filename for ds000030."""
     return f"{subject_id}_task-rest_bold_space-MNI152NLin2009cAsym_preproc.nii.gz"
 
 
 def get_subject_func_path(subject_id: str, raw_dir: Path | None = None) -> Path:
-    """
-    Return local path for a subject's preprocessed resting-state fMRI file.
-    """
+    """Return local path for a subject's preprocessed resting-state fMRI file."""
     project_root = get_project_root()
 
     if raw_dir is None:
@@ -84,7 +77,9 @@ def download_preprocessed_rest_fmri(
             last_error = error
             print(f"Failed: {error}")
 
-    raise RuntimeError(f"Could not download file for {subject_id}. Last error: {last_error}")
+    raise RuntimeError(
+        f"Could not download file for {subject_id}. Last error: {last_error}"
+    )
 
 
 def load_harvard_oxford_atlas():
@@ -115,9 +110,7 @@ def extract_roi_time_series(
     low_pass: float = 0.1,
     high_pass: float = 0.01,
 ) -> np.ndarray:
-    """
-    Extract regional BOLD time series using a labels atlas.
-    """
+    """Extract regional BOLD time series using a labels atlas."""
     masker = NiftiLabelsMasker(
         labels_img=atlas_filename,
         standardize="zscore_sample",
@@ -134,16 +127,13 @@ def extract_roi_time_series(
 
 
 def compute_connectivity_matrix(time_series: np.ndarray) -> np.ndarray:
-    """
-    Compute ROI-to-ROI Pearson correlation matrix.
-    """
+    """Compute ROI-to-ROI Pearson correlation matrix."""
     correlation_measure = ConnectivityMeasure(
         kind="correlation",
         standardize="zscore_sample",
     )
 
     matrix = correlation_measure.fit_transform([time_series])[0]
-
     np.fill_diagonal(matrix, 0)
 
     return matrix
@@ -155,9 +145,7 @@ def save_connectivity_matrix(
     subject_id: str,
     output_dir: Path | None = None,
 ) -> tuple[Path, Path]:
-    """
-    Save connectivity matrix as .npy and .csv.
-    """
+    """Save connectivity matrix as .npy and .csv."""
     project_root = get_project_root()
 
     if output_dir is None:
@@ -184,7 +172,6 @@ def save_connectivity_matrix(
 def build_subject_connectivity_matrix(subject_id: str) -> dict:
     """
     Full single-subject pipeline:
-
     download fMRI -> load atlas -> extract time series -> compute matrix -> save matrix.
     """
     func_path = download_preprocessed_rest_fmri(subject_id)

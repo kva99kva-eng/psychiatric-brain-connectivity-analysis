@@ -19,6 +19,10 @@ data/processed/
 *.nii.gz
 *.tsv
 *.csv
+*.npy
+
+# Reports generated locally
+reports/figures/
 
 # OS
 .DS_Store
@@ -30,4 +34,3 @@ Thumbs.db
 
 # Logs
 *.log
-reports/figures/

@@ -1,14 +1,18 @@
-import numpy as np
+﻿import numpy as np
 import pandas as pd
 
 
-def vectorize_upper_triangle(matrix: np.ndarray) -> tuple[np.ndarray, tuple[np.ndarray, np.ndarray]]:
+def vectorize_upper_triangle(
+    matrix: np.ndarray,
+) -> tuple[np.ndarray, tuple[np.ndarray, np.ndarray]]:
     """
     Convert a square connectivity matrix into a vector using the upper triangle.
-    Diagonal is excluded.
+
+    The diagonal is excluded.
     """
     triu_indices = np.triu_indices_from(matrix, k=1)
     vector = matrix[triu_indices]
+
     return vector, triu_indices
 
 
@@ -17,21 +21,28 @@ def reconstruct_symmetric_matrix(
     triu_indices: tuple[np.ndarray, np.ndarray],
     matrix_size: int,
 ) -> np.ndarray:
-    """
-    Reconstruct a symmetric matrix from an upper-triangle vector.
-    """
+    """Reconstruct a symmetric matrix from an upper-triangle vector."""
     matrix = np.zeros((matrix_size, matrix_size))
     matrix[triu_indices] = vector
     matrix = matrix + matrix.T
+
     return matrix
 
 
-def benjamini_hochberg_fdr(p_values: np.ndarray, alpha: float = 0.05) -> tuple[np.ndarray, np.ndarray]:
-    """
-    Benjamini-Hochberg FDR correction.
-    """
-    p_values = np.asarray(p_values)
+def benjamini_hochberg_fdr(
+    p_values: np.ndarray,
+    alpha: float = 0.05,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Benjamini-Hochberg FDR correction."""
+    p_values = np.asarray(p_values, dtype=float)
+
+    if p_values.ndim != 1:
+        raise ValueError("p_values must be a one-dimensional array.")
+
     n_tests = len(p_values)
+
+    if n_tests == 0:
+        return np.array([], dtype=bool), np.array([], dtype=float)
 
     sorted_indices = np.argsort(p_values)
     sorted_p = p_values[sorted_indices]
@@ -60,12 +71,13 @@ def permutation_group_comparison(
     """
     Perform edge-wise permutation testing between control and patient connectivity vectors.
 
-    This avoids assumptions of normality and works as an exploratory method for small samples.
+    This is an exploratory method for small samples and should not be interpreted
+    as a clinical or confirmatory statistical result.
     """
     rng = np.random.default_rng(random_state)
 
-    control_vectors = np.asarray(control_vectors)
-    patient_vectors = np.asarray(patient_vectors)
+    control_vectors = np.atleast_2d(np.asarray(control_vectors, dtype=float))
+    patient_vectors = np.atleast_2d(np.asarray(patient_vectors, dtype=float))
 
     mean_control = np.nanmean(control_vectors, axis=0)
     mean_patient = np.nanmean(patient_vectors, axis=0)
@@ -74,6 +86,7 @@ def permutation_group_comparison(
     observed_abs_difference = np.abs(observed_difference)
 
     combined = np.vstack([control_vectors, patient_vectors])
+
     n_control = control_vectors.shape[0]
     n_total = combined.shape[0]
 
@@ -85,14 +98,20 @@ def permutation_group_comparison(
         perm_control = combined[shuffled_indices[:n_control]]
         perm_patient = combined[shuffled_indices[n_control:]]
 
-        perm_difference = np.nanmean(perm_patient, axis=0) - np.nanmean(perm_control, axis=0)
+        perm_difference = (
+            np.nanmean(perm_patient, axis=0)
+            - np.nanmean(perm_control, axis=0)
+        )
+
         perm_abs_difference = np.abs(perm_difference)
 
         permutation_counts += perm_abs_difference >= observed_abs_difference
 
     p_values = (permutation_counts + 1) / (n_permutations + 1)
-
-    rejected, adjusted_p_values = benjamini_hochberg_fdr(p_values, alpha=alpha)
+    rejected, adjusted_p_values = benjamini_hochberg_fdr(
+        p_values,
+        alpha=alpha,
+    )
 
     roi_i = triu_indices[0]
     roi_j = triu_indices[1]
@@ -109,4 +128,8 @@ def permutation_group_comparison(
         "significant_fdr": rejected,
     })
 
-    return results.sort_values("abs_mean_difference", ascending=False).reset_index(drop=True)
+    return (
+        results
+        .sort_values("abs_mean_difference", ascending=False)
+        .reset_index(drop=True)
+    )

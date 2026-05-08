@@ -1,7 +1,7 @@
 # Psychiatric Brain Connectivity Analysis
 
 Author: Victoria Kupina
-Role: Data Analyst / Junior Data Scientist
+Role: Data Analyst
 
 ## Problem Statement
 

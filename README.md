@@ -1,7 +1,23 @@
 # Psychiatric Brain Connectivity Analysis
 
-Author: Victoria Kupina
-Role: Data Analyst
+Resting-state fMRI functional connectivity analysis across psychiatric diagnostic groups using the UCLA Consortium for Neuropsychiatric Phenomics dataset.
+
+This project is designed as an educational neuroscience / neuroimaging analytics case study. It demonstrates how to structure an exploratory functional connectivity workflow, apply multiple-comparison correction, and evaluate a simple baseline classifier while clearly documenting limitations.
+
+## Executive Summary
+
+This project demonstrates a small-scale exploratory pipeline for psychiatric brain connectivity analysis.
+
+The strongest part of the project is not model performance, but the research workflow:
+
+- define a neuroscience question;
+- load and inspect neuroimaging metadata;
+- build or load ROI-based functional connectivity matrices;
+- compare connectivity patterns across diagnostic groups;
+- run exploratory permutation testing;
+- apply Benjamini-Hochberg FDR correction;
+- train a simple baseline classifier with leakage-safe preprocessing;
+- explicitly state why results should not be interpreted as diagnostic or clinical claims.
 
 ## Problem Statement
 
@@ -10,16 +26,6 @@ Psychiatric disorders may be associated with differences in functional brain con
 This project explores resting-state fMRI functional connectivity patterns across psychiatric and control groups using the UCLA Consortium for Neuropsychiatric Phenomics dataset.
 
 The goal is to build an educational neuroscience data analysis pipeline, not a clinical diagnostic tool.
-
-## Objectives
-
-- Load and inspect neuroimaging metadata.
-- Extract or load functional connectivity matrices.
-- Compare brain connectivity patterns across diagnostic groups.
-- Perform exploratory statistical testing.
-- Apply FDR correction for multiple comparisons.
-- Build a simple baseline machine learning classifier.
-- Clearly document limitations caused by very small sample size.
 
 ## Dataset
 
@@ -34,26 +40,31 @@ The dataset includes participants from several groups, including:
 
 Large neuroimaging files are not stored in this repository. Local data should be placed in the `data/` directory according to the project instructions.
 
-## Project Structure
+## Analysis Workflow
 
-- `assets/` — visual assets used in the README.
-- `data/` — local raw and processed data directories.
-- `notebooks/` — step-by-step analysis notebooks.
-- `src/` — reusable Python functions.
-- `requirements.txt` — Python dependencies.
-- `README.md` — project documentation.
-- `LICENSE` — MIT license.
+The project follows this workflow:
+
+1. Inspect metadata and diagnostic group structure.
+2. Download or load preprocessed resting-state fMRI data.
+3. Extract ROI time series using an anatomical atlas.
+4. Compute ROI-to-ROI Pearson correlation connectivity matrices.
+5. Vectorize upper-triangle connectivity edges.
+6. Compare groups using exploratory permutation testing.
+7. Apply FDR correction across connectivity edges.
+8. Train a simple baseline classifier using Leave-One-Out cross-validation.
+9. Interpret results cautiously because of small sample size.
 
 ## Methods
 
 - Resting-state fMRI analysis
 - ROI-based functional connectivity
+- Harvard-Oxford cortical atlas
 - Pearson correlation connectivity matrices
 - Group-level connectivity comparison
 - Permutation testing
 - Benjamini-Hochberg FDR correction
-- Baseline machine learning classification
-- Leave-One-Out cross-validation for tiny sample demonstration
+- Logistic Regression baseline
+- Leave-One-Out cross-validation for tiny-sample demonstration
 
 ## Notebooks
 
@@ -73,32 +84,59 @@ Large neuroimaging files are not stored in this repository. Local data should be
 | `src/statistics.py` | Functions for vectorizing matrices, permutation testing and FDR correction |
 | `src/modeling.py` | Functions for baseline machine learning classification |
 
+## Project Structure
+
+```text
+psychiatric-brain-connectivity-analysis/
+├── assets/
+├── notebooks/
+├── src/
+│   ├── connectivity.py
+│   ├── modeling.py
+│   └── statistics.py
+├── .gitattributes
+├── .gitignore
+├── LICENSE
+├── README.md
+└── requirements.txt
+```
+
+## Key Analytical Decisions
+
+### 1. Connectivity matrices instead of raw voxel modeling
+
+The project uses ROI-based connectivity matrices rather than raw voxel-level modeling. This makes the analysis more interpretable and more suitable for a small educational project.
+
+### 2. Upper-triangle vectorization
+
+Connectivity matrices are symmetric. Only the upper triangle is used as a feature vector to avoid duplicate edges.
+
+### 3. Permutation testing
+
+Permutation testing is used for exploratory group comparison because small-sample neuroimaging data often violates parametric assumptions.
+
+### 4. FDR correction
+
+Benjamini-Hochberg FDR correction is applied to reduce false positives across many connectivity edges.
+
+### 5. Leakage-safe ML pipeline
+
+The baseline Logistic Regression model uses `StandardScaler` inside a scikit-learn `Pipeline`, so scaling is fitted inside cross-validation folds rather than on the whole dataset.
+
 ## Results
 
-The project demonstrates a full exploratory workflow for psychiatric brain connectivity analysis.
+The project demonstrates a complete exploratory workflow for psychiatric brain connectivity analysis.
 
 Current results should be interpreted cautiously because the repository uses a very small validation subset. The statistical testing and machine learning sections are included to demonstrate methodology, not to make clinical or scientific claims.
 
 ## Visual Results
 
-Add generated figures here after running the notebooks, for example:
+Generated figures can be placed in `assets/`, for example:
 
 - group mean connectivity heatmaps;
 - connectivity difference heatmaps;
 - top altered connections;
 - classifier confusion matrix.
-
-## Tech Stack
-
-- Python
-- NumPy
-- Pandas
-- Matplotlib
-- SciPy
-- Scikit-learn
-- Nilearn
-- NiBabel
-- Jupyter Lab
 
 ## How to Run
 
@@ -106,11 +144,6 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/kva99kva-eng/psychiatric-brain-connectivity-analysis.git
-```
-
-Go to the project folder:
-
-```bash
 cd psychiatric-brain-connectivity-analysis
 ```
 
@@ -118,7 +151,12 @@ Create and activate a virtual environment:
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
+```
+
+Windows PowerShell:
+
+```bash
+.\.venv\Scripts\Activate.ps1
 ```
 
 Install dependencies:
@@ -135,6 +173,19 @@ jupyter lab
 
 Then run the notebooks in order from `01` to `05`.
 
+## Validation and Interpretation
+
+This project should be treated as a methodology demonstration.
+
+The machine learning section is not intended to prove diagnostic separability between groups. With small sample sizes, model scores can be unstable and sensitive to the specific subjects included in the validation subset.
+
+The correct interpretation is:
+
+- the pipeline demonstrates how connectivity features can be extracted and analyzed;
+- statistical testing demonstrates an exploratory workflow;
+- ML classification demonstrates baseline methodology;
+- results are not validated biomarkers.
+
 ## Limitations
 
 This project uses a simplified educational workflow and a very small local validation subset.
@@ -149,6 +200,31 @@ It does not provide:
 - medical recommendations.
 
 The statistical and machine learning results should be interpreted as pipeline demonstrations only.
+
+## Future Work
+
+- Add a larger reproducible subject subset.
+- Add confound checks for age, sex and motion where metadata is available.
+- Add more robust preprocessing documentation.
+- Add visualization of group-level connectivity differences.
+- Add nested cross-validation for any future ML model selection.
+- Add tests for connectivity and statistics utility functions.
+
+## Tech Stack
+
+- Python
+- NumPy
+- pandas
+- Matplotlib
+- SciPy
+- scikit-learn
+- Nilearn
+- NiBabel
+- Jupyter Lab
+
+## Resume Summary
+
+Built an exploratory resting-state fMRI connectivity pipeline using the UCLA CNP dataset. Implemented ROI-based connectivity extraction, group comparison, permutation testing, FDR correction and leakage-safe baseline classification with clear clinical limitations.
 
 ## License
 

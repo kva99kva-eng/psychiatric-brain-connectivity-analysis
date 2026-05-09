@@ -1,4 +1,4 @@
-﻿from pathlib import Path
+from pathlib import Path
 from urllib.request import urlretrieve
 
 import numpy as np
@@ -35,22 +35,7 @@ def download_preprocessed_rest_fmri(
     raw_dir: Path | None = None,
     overwrite: bool = False,
 ) -> Path:
-    """
-    Download one preprocessed resting-state fMRI file from OpenNeuro S3.
-
-    Parameters
-    ----------
-    subject_id:
-        Subject ID, for example 'sub-10159'.
-    raw_dir:
-        Local raw data directory.
-    overwrite:
-        If True, download even if the file already exists.
-
-    Returns
-    -------
-    Path to downloaded or existing file.
-    """
+    """Download one preprocessed resting-state fMRI file from OpenNeuro S3."""
     func_path = get_subject_func_path(subject_id, raw_dir=raw_dir)
     func_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -61,8 +46,14 @@ def download_preprocessed_rest_fmri(
     filename = get_subject_func_filename(subject_id)
 
     candidate_urls = [
-        f"https://s3.amazonaws.com/openneuro/ds000030/ds000030_R1.0.4/uncompressed/derivatives/fmriprep/{subject_id}/func/{filename}",
-        f"https://s3.amazonaws.com/openneuro/ds000030/ds000030_R1.0.5/uncompressed/derivatives/fmriprep/{subject_id}/func/{filename}",
+        (
+            "https://s3.amazonaws.com/openneuro/ds000030/"
+            f"ds000030_R1.0.4/uncompressed/derivatives/fmriprep/{subject_id}/func/{filename}"
+        ),
+        (
+            "https://s3.amazonaws.com/openneuro/ds000030/"
+            f"ds000030_R1.0.5/uncompressed/derivatives/fmriprep/{subject_id}/func/{filename}"
+        ),
     ]
 
     last_error = None
@@ -72,6 +63,7 @@ def download_preprocessed_rest_fmri(
             print(f"Trying download from: {url}")
             urlretrieve(url, func_path)
             print(f"Downloaded to: {func_path}")
+
             return func_path
         except Exception as error:
             last_error = error
@@ -83,18 +75,9 @@ def download_preprocessed_rest_fmri(
 
 
 def load_harvard_oxford_atlas():
-    """
-    Load Harvard-Oxford cortical atlas.
-
-    Returns
-    -------
-    atlas_filename:
-        Path to atlas image.
-    roi_labels:
-        ROI labels excluding background.
-    """
+    """Load Harvard-Oxford cortical atlas."""
     atlas = datasets.fetch_atlas_harvard_oxford(
-        atlas_name="cort-maxprob-thr25-2mm"
+        atlas_name="cort-maxprob-thr25-2mm",
     )
 
     atlas_filename = atlas.maps
@@ -163,17 +146,13 @@ def save_connectivity_matrix(
         index=roi_labels,
         columns=roi_labels,
     )
-
     matrix_df.to_csv(csv_path)
 
     return npy_path, csv_path
 
 
 def build_subject_connectivity_matrix(subject_id: str) -> dict:
-    """
-    Full single-subject pipeline:
-    download fMRI -> load atlas -> extract time series -> compute matrix -> save matrix.
-    """
+    """Run a single-subject connectivity pipeline."""
     func_path = download_preprocessed_rest_fmri(subject_id)
     atlas_filename, roi_labels = load_harvard_oxford_atlas()
 

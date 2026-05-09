@@ -1,28 +1,25 @@
-﻿# Python
+# Python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 
-# Virtual environment
+# Virtual environments
 .venv/
 venv/
 env/
 
 # Jupyter
 .ipynb_checkpoints/
+*/.ipynb_checkpoints/
 
 # Data
 data/raw/
 data/processed/
 *.nii
 *.nii.gz
-*.tsv
-*.csv
 *.npy
-
-# Reports generated locally
-reports/figures/
+*.npz
 
 # OS
 .DS_Store

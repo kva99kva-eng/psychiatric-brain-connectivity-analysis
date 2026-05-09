@@ -1,15 +1,11 @@
-﻿import numpy as np
+import numpy as np
 import pandas as pd
 
 
 def vectorize_upper_triangle(
     matrix: np.ndarray,
 ) -> tuple[np.ndarray, tuple[np.ndarray, np.ndarray]]:
-    """
-    Convert a square connectivity matrix into a vector using the upper triangle.
-
-    The diagonal is excluded.
-    """
+    """Convert a square connectivity matrix into a vector using the upper triangle."""
     triu_indices = np.triu_indices_from(matrix, k=1)
     vector = matrix[triu_indices]
 
@@ -33,17 +29,10 @@ def benjamini_hochberg_fdr(
     p_values: np.ndarray,
     alpha: float = 0.05,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Benjamini-Hochberg FDR correction."""
-    p_values = np.asarray(p_values, dtype=float)
-
-    if p_values.ndim != 1:
-        raise ValueError("p_values must be a one-dimensional array.")
+    """Apply Benjamini-Hochberg FDR correction."""
+    p_values = np.asarray(p_values)
 
     n_tests = len(p_values)
-
-    if n_tests == 0:
-        return np.array([], dtype=bool), np.array([], dtype=float)
-
     sorted_indices = np.argsort(p_values)
     sorted_p = p_values[sorted_indices]
 
@@ -71,13 +60,12 @@ def permutation_group_comparison(
     """
     Perform edge-wise permutation testing between control and patient connectivity vectors.
 
-    This is an exploratory method for small samples and should not be interpreted
-    as a clinical or confirmatory statistical result.
+    This avoids assumptions of normality and works as an exploratory method for small samples.
     """
     rng = np.random.default_rng(random_state)
 
-    control_vectors = np.atleast_2d(np.asarray(control_vectors, dtype=float))
-    patient_vectors = np.atleast_2d(np.asarray(patient_vectors, dtype=float))
+    control_vectors = np.asarray(control_vectors)
+    patient_vectors = np.asarray(patient_vectors)
 
     mean_control = np.nanmean(control_vectors, axis=0)
     mean_patient = np.nanmean(patient_vectors, axis=0)
@@ -94,42 +82,38 @@ def permutation_group_comparison(
 
     for _ in range(n_permutations):
         shuffled_indices = rng.permutation(n_total)
-
         perm_control = combined[shuffled_indices[:n_control]]
         perm_patient = combined[shuffled_indices[n_control:]]
 
-        perm_difference = (
-            np.nanmean(perm_patient, axis=0)
-            - np.nanmean(perm_control, axis=0)
+        perm_difference = np.nanmean(perm_patient, axis=0) - np.nanmean(
+            perm_control,
+            axis=0,
         )
-
         perm_abs_difference = np.abs(perm_difference)
 
         permutation_counts += perm_abs_difference >= observed_abs_difference
 
     p_values = (permutation_counts + 1) / (n_permutations + 1)
-    rejected, adjusted_p_values = benjamini_hochberg_fdr(
-        p_values,
-        alpha=alpha,
-    )
+    rejected, adjusted_p_values = benjamini_hochberg_fdr(p_values, alpha=alpha)
 
     roi_i = triu_indices[0]
     roi_j = triu_indices[1]
 
-    results = pd.DataFrame({
-        "roi_1": [roi_labels[i] for i in roi_i],
-        "roi_2": [roi_labels[j] for j in roi_j],
-        "mean_control": mean_control,
-        "mean_patient": mean_patient,
-        "mean_difference": observed_difference,
-        "abs_mean_difference": observed_abs_difference,
-        "p_value_permutation": p_values,
-        "p_fdr": adjusted_p_values,
-        "significant_fdr": rejected,
-    })
-
-    return (
-        results
-        .sort_values("abs_mean_difference", ascending=False)
-        .reset_index(drop=True)
+    results = pd.DataFrame(
+        {
+            "roi_1": [roi_labels[i] for i in roi_i],
+            "roi_2": [roi_labels[j] for j in roi_j],
+            "mean_control": mean_control,
+            "mean_patient": mean_patient,
+            "mean_difference": observed_difference,
+            "abs_mean_difference": observed_abs_difference,
+            "p_value_permutation": p_values,
+            "p_fdr": adjusted_p_values,
+            "significant_fdr": rejected,
+        }
     )
+
+    return results.sort_values(
+        "abs_mean_difference",
+        ascending=False,
+    ).reset_index(drop=True)

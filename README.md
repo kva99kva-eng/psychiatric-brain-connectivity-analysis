@@ -86,6 +86,23 @@ The project follows this workflow:
 | `src/statistics.py` | Functions for vectorizing matrices, permutation testing and FDR correction |
 | `src/modeling.py` | Functions for baseline machine learning classification |
 
+## Quality and Reproducibility
+
+This repository is structured as a reproducible research-style project rather than a notebook-only experiment.
+
+| Component | Purpose |
+|---|---|
+| `src/` | Reusable Python modules for connectivity, statistics and modeling |
+| `tests/` | Unit tests for core utility functions |
+| GitHub Actions | Automatic test execution on push and pull request |
+| `notebooks/` | Step-by-step exploratory analysis workflow |
+| `assets/` and `reports/figures/` | Saved visual outputs used in the README |
+| `.gitignore` | Keeps local environments, cache files and large data out of the repository |
+
+Current local test status:
+
+`10 passed`
+
 ## Project Structure
 
 ```text

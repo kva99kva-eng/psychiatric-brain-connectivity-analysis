@@ -142,16 +142,38 @@ The baseline Logistic Regression model uses `StandardScaler` inside a scikit-lea
 
 The project demonstrates a complete exploratory workflow for psychiatric brain connectivity analysis.
 
-Current results should be interpreted cautiously because the repository uses a very small validation subset. The statistical testing and machine learning sections are included to demonstrate methodology, not to make clinical or scientific claims.
+The main value of the project is not high model performance, but the ability to build a reproducible research pipeline:
+
+- ROI-level functional connectivity matrices are generated from resting-state fMRI data;
+- symmetric connectivity matrices are converted into upper-triangle feature vectors;
+- group differences are explored using permutation-based testing;
+- multiple-comparison risk is addressed with Benjamini-Hochberg FDR correction;
+- a simple baseline classifier is evaluated with leakage-safe preprocessing.
+
+The results should be interpreted cautiously because this repository uses a small local validation subset. The statistical testing and machine learning sections are included to demonstrate methodology, not to make clinical or diagnostic claims.
 
 ## Visual Results
 
-Generated figures can be placed in `assets/`, for example:
+### Group connectivity difference
 
-- group mean connectivity heatmaps;
-- connectivity difference heatmaps;
-- top altered connections;
-- classifier confusion matrix.
+![Group connectivity difference](assets/group_connectivity_difference.png)
+
+### Baseline ML classification results
+
+![ML classification results](assets/ml_classification_results.png)
+
+### Example subject-level connectivity matrix
+
+![Subject connectivity matrix](reports/figures/sub-10159_connectivity_matrix.png)
+
+## Key Findings
+
+- The project shows how raw neuroimaging data can be transformed into interpretable ROI-to-ROI connectivity features.
+- Upper-triangle vectorization reduces redundant information and makes connectivity matrices usable for statistical testing and machine learning.
+- Permutation testing is more appropriate for this small exploratory setup than relying only on parametric assumptions.
+- FDR correction is necessary because connectivity analysis involves many pairwise ROI comparisons.
+- The ML model should be treated as a baseline demonstration, not as evidence of clinical diagnostic performance.
+- The most important outcome is a transparent and reproducible research workflow with explicit limitations.
 
 ## How to Run
 
@@ -221,9 +243,10 @@ The statistical and machine learning results should be interpreted as pipeline d
 - Add a larger reproducible subject subset.
 - Add confound checks for age, sex and motion where metadata is available.
 - Add more robust preprocessing documentation.
-- Add visualization of group-level connectivity differences.
 - Add nested cross-validation for any future ML model selection.
-- Add tests for connectivity and statistics utility functions.
+- Add model comparison only after increasing the validation sample size.
+- Add more detailed reporting of statistically corrected connectivity edges.
+
 
 ## Tech Stack
 

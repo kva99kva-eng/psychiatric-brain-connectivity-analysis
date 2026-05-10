@@ -1,5 +1,7 @@
 # Psychiatric Brain Connectivity Analysis
 
+[![Tests](https://github.com/kva99kva-eng/psychiatric-brain-connectivity-analysis/actions/workflows/tests.yml/badge.svg)](https://github.com/kva99kva-eng/psychiatric-brain-connectivity-analysis/actions/workflows/tests.yml)
+
 Resting-state fMRI functional connectivity analysis across psychiatric diagnostic groups using the UCLA Consortium for Neuropsychiatric Phenomics dataset.
 
 This project is designed as an educational neuroscience / neuroimaging analytics case study. It demonstrates how to structure an exploratory functional connectivity workflow, apply multiple-comparison correction, and evaluate a simple baseline classifier while clearly documenting limitations.
@@ -88,18 +90,31 @@ The project follows this workflow:
 
 ```text
 psychiatric-brain-connectivity-analysis/
-├── assets/
-├── notebooks/
-├── src/
-│   ├── connectivity.py
-│   ├── modeling.py
-│   └── statistics.py
-├── .gitattributes
-├── .gitignore
-├── LICENSE
-├── README.md
-└── requirements.txt
+|-- .github/
+|   `-- workflows/
+|       `-- tests.yml
+|-- assets/
+|   |-- group_connectivity_difference.png
+|   `-- ml_classification_results.png
+|-- data/
+|-- notebooks/
+|-- reports/
+|-- src/
+|   |-- __init__.py
+|   |-- connectivity.py
+|   |-- modeling.py
+|   `-- statistics.py
+|-- tests/
+|   |-- test_connectivity.py
+|   |-- test_modeling.py
+|   `-- test_statistics.py
+|-- .gitattributes
+|-- .gitignore
+|-- LICENSE
+|-- README.md
+`-- requirements.txt
 ```
+
 
 ## Key Analytical Decisions
 
